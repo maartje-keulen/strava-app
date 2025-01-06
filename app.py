@@ -21,8 +21,14 @@ def get_db_config():
     return db_config
 
 # Fetch and use the DB configuration
-db_config = get_db_config()
+#db_config = get_db_config()
 #print(db_config)
+db_config = {
+    "user": user,
+    "password": password,
+    "host": host,
+    "port": port
+}
 
 try:
     # Connect to the database
