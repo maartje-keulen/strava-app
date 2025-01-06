@@ -24,10 +24,10 @@ def get_db_config():
 #db_config = get_db_config()
 #print(db_config)
 db_config = {
-    "user": user,
-    "password": password,
-    "host": host,
-    "port": port
+    "user": st.secrets["user"],
+    "password": st.secrets["password"],
+    "host": st.secrets["host"],
+    "port": st.secrets["port"]
 }
 
 try:
