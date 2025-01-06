@@ -6,6 +6,7 @@ import plotly.express as px
 import json
 from google.cloud import secretmanager
 from datetime import datetime
+import streamlit as st
 
 def get_db_config():
     client = secretmanager.SecretManagerServiceClient()
@@ -63,8 +64,6 @@ finally:
     if 'connection' in locals():
         connection.close()
         print("Database connection closed.")
-
-import streamlit as st
 
 data_import["hours"] = data_import["elapsed_time"] / 3600
 data_import["year"] = data_import["year"].astype(str)
