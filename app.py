@@ -295,8 +295,8 @@ with col:
     
     
     st.divider()
-    st.markdown('#### Top Sports since 2008')
-    st.markdown('Pretty fun to see how much of my adult life I have spent on different sports.')
+    st.markdown('#### All Time Favourite Sports since 2008')
+    st.markdown('Total amount of hours I have spent on different sports in my adult life.')
 
 
     st.dataframe(top_sports,
