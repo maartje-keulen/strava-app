@@ -1,0 +1,73 @@
+﻿year,avg_hours,sport_type,hours
+2008,5.533333333,Football,265.6
+2009,5.727222222,Football,274.9066667
+2010,4.020555556,Football,192.9866667
+2011,4.375,Football,210
+2012,3.422222222,Football,164.2666667
+2013,3,Football,144
+2014,4,Football,192
+2015,2,Football,96
+2016,0,Football,0
+2017,0,Football,0
+2018,0,Football,0
+2019,0,Football,0
+2008,0,Ultimate Frisbee,0
+2009,0,Ultimate Frisbee,0
+2010,0,Ultimate Frisbee,0
+2011,0,Ultimate Frisbee,0
+2012,0,Ultimate Frisbee,0
+2013,1,Ultimate Frisbee,48
+2014,4,Ultimate Frisbee,192
+2015,6,Ultimate Frisbee,288
+2016,6,Ultimate Frisbee,288
+2017,5,Ultimate Frisbee,240
+2018,6,Ultimate Frisbee,288
+2019,4,Ultimate Frisbee,192
+2008,4,Bike,192
+2009,4,Bike,192
+2010,4,Bike,192
+2011,1,Bike,48
+2012,1,Bike,48
+2013,0.1,Bike,4.8
+2014,0.5,Bike,24
+2015,0.5,Bike,24
+2016,0.5,Bike,24
+2017,0.5,Bike,24
+2018,0.5,Bike,24
+2019,1,Bike,48
+2008,0,Weight Training,0
+2009,0,Weight Training,0
+2010,0,Weight Training,0
+2011,0,Weight Training,0
+2012,0,Weight Training,0
+2013,0,Weight Training,0
+2014,0,Weight Training,0
+2015,4,Weight Training,192
+2016,4,Weight Training,192
+2017,3,Weight Training,144
+2018,5,Weight Training,240
+2019,2,Weight Training,96
+2008,0,Hike,0
+2009,0,Hike,0
+2010,0,Hike,0
+2011,0,Hike,0
+2012,0,Hike,0
+2013,1,Hike,48
+2014,0,Hike,0
+2015,0,Hike,0
+2016,0,Hike,0
+2017,0,Hike,0
+2018,0,Hike,0
+2019,0,Hike,0
+2008,0,Run,0
+2009,0,Run,0
+2010,0,Run,0
+2011,0,Run,0
+2012,0,Run,0
+2013,1,Run,48
+2014,0,Run,0
+2015,0,Run,0
+2016,0,Run,0
+2017,0,Run,0
+2018,0,Run,0
+2019,0,Run,0
