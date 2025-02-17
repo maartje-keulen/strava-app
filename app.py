@@ -104,14 +104,29 @@ def calculate_avg_hours(row):
         # For future years (if applicable), return None or 0
         return None
     
+old_data = pd.read_csv("data_before_2020.csv")
+old_data["sport_type"] = old_data["sport_type"].replace({
+    "Bike": "Ride 🚲",
+    "Ultimate Frisbee": "Ultimate Frisbee 🥏",
+    "Weight Training": "Weight Training 💪",
+    "Hike": "Hike 🏔️",
+    "Run": "Run 🏃‍♀️",
+    "Football": "Football ⚽"
+})
 aggregated_df = data_import.groupby(["year", "sport_type"], as_index=False).agg(
     hours=("hours", "sum")).sort_values(by="hours", ascending=False)
+
 aggregated_df['avg_hours'] = aggregated_df.apply(calculate_avg_hours, axis=1)
+aggregated_df = pd.concat([aggregated_df, old_data], ignore_index=True)
 
 top_sports = aggregated_df.groupby(["sport_type"], as_index=False).agg(hours=("hours", "sum"))
 top_sports = top_sports.sort_values(by="hours", ascending=False)
 top_sports["hours"] = top_sports["hours"].round(0).astype(int)
 #st.bar_chart(data_import, x="year", y="hours", color="sport_type", horizontal=True)
+
+#filter only most popular sports for yearly overview
+filtered_sports = top_sports[top_sports['hours'] > 20]
+filtered_aggregated_df = aggregated_df[aggregated_df['sport_type'].isin(filtered_sports['sport_type'])]
 
 data_year_month = data_import.groupby(["year", "month", "sport_type"], as_index=False).agg(hours=("hours", "sum"))
 
@@ -130,7 +145,6 @@ sports_per_year = aggregated_df.groupby(['year', 'sports_category'])['hours'].su
 
 target_year = '2024'
 compare_year = '2023'
-
 
 #active days
 active_2024 = active_days_per_year[active_days_per_year['year']==target_year]['date'].values[0]
@@ -179,7 +193,8 @@ def make_overview(dataset, input_x, input_y, input_color, input_title):
 )
     return overview
 
-def make_lines(dataset, input_x, input_y, input_color, input_title):
+
+def make_bars(dataset, input_x, input_y, input_color, input_title):
     overview = px.bar(dataset, x=input_x, #"sport_type"
     y=input_y, #"hours",
     color=input_color, #"year",
@@ -187,6 +202,15 @@ def make_lines(dataset, input_x, input_y, input_color, input_title):
     title=input_title,
     labels={"hours": "Total Hours", "sport_type": "Sport Type"},
     text="sport_type"  # Display values on the bars
+        )
+    return overview
+
+def make_lines(dataset, input_x, input_y, input_color, input_title):
+    overview = px.area(dataset, x=input_x,
+    y=input_y,
+    color=input_color,
+    title=input_title,
+    labels={"hours": "Average Hours per Week", "sport_type": "Sport Type"}
         )
     return overview
 
@@ -214,13 +238,33 @@ fig.update_layout(
 
 st.set_page_config(
     page_title="Training Efforts",
-    layout="wide",
-    initial_sidebar_state="expanded")
+    layout="wide")
 
-#alt.themes.enable("dark")
+col = st.columns([1])[0]
 
-with st.sidebar:
-    st.title('My Sports Overview for 2024')
+with col:
+    st.markdown('#### How my training focus changed over the years')
+    st.markdown('How do I keep training consistently for over 15 years already? It is not just about discipline, perseverance and a strong inner drive. My shift in sports activities over time shows how I have been able to keep it up for so long. I try to be pragmatic and realistic and find ways to keep it fun. I am always looking for adjustments to adapt to my evolving lifestyle.')
+    st.markdown('')
+
+    graph2 = make_lines(filtered_aggregated_df, 'year', 'avg_hours', 'sport_type', 'Average Training Hours per Week per Sport')
+    st.plotly_chart(graph2, use_container_width=True)
+
+    st.divider()
+    st.markdown('#### Every year looks different!')
+    st.markdown('This graph shows how I adapted my training load every season to when it counts most for me to be fit and also to match my motivation level. Also for me it is impossible to stay motivated all the time. My favorite excuses: it is so cold and dark outside, I am too tired, I had an exhausting day at work… Enjoy what you do over executing perfectly!')
+    st.markdown('')
+
+    year_list = sorted(data_import.year.unique(), reverse=True)[::-1]
+    selected_year = st.radio('Select a year:', year_list, index=len(year_list)-1, horizontal=True)
+    df_selected_year = data_year_month[data_year_month.year == selected_year]
+    df_selected_year_sorted = df_selected_year.sort_values(by="sport_type", ascending=False)
+
+    graph3 = make_overview(df_selected_year_sorted, 'month', 'hours', 'sport_type', 'Training Hours per Month')
+    st.plotly_chart(graph3, use_container_width=True)
+    
+    st.divider()
+    st.markdown('#### 2024 was my most active year so far!')
     st.markdown('')
 
     subcol1, subcol2 = st.columns(2)
@@ -231,8 +275,29 @@ with st.sidebar:
     with subcol2:
         st.metric(label="Total Training Hours", value=int(training_2024), delta = int(d_training_2024))
 
+    st.markdown('')
+    st.markdown('#### Lets see what changed in 2024 compared to 2023')
+    st.markdown('These are the total hours I have invested in every activity and how much that changed compared to 2023.')
+    st.markdown('')
+    # Display the chart in Streamlit    
+    sub1, sub2, sub3, sub4, sub5 = st.columns(5)
+    
+    with sub1:
+        st.metric(label=frisbee_label, value=int(frisbee_target), delta = int(frisbee_target-frisbee_compare))
+    with sub2:
+        st.metric(label=ride_label, value=int(ride_target), delta = int(ride_target-ride_compare))
+    with sub3:
+        st.metric(label=weights_label, value=int(weights_target), delta = int(weights_target-weights_compare))
+    with sub4:
+        st.metric(label=run_label, value=int(run_target), delta = int(run_target-run_compare))
+    with sub5:
+        st.metric(label=other_label, value=int(other_target), delta = int(other_target-other_compare))
+    
+    
     st.divider()
-    st.markdown('#### Top Sports since 2020')
+    st.markdown('#### Top Sports since 2008')
+    st.markdown('Pretty fun to see how much of my adult life I have spent on different sports.')
+
 
     st.dataframe(top_sports,
                  column_order=("sport_type", "hours"),
@@ -249,49 +314,3 @@ with st.sidebar:
                         max_value=max(top_sports.hours),
                      )}
                  )
-    
-
-col = st.columns([1])[0]
-
-with col:
-    st.markdown('#### Training Hours in 2024 compared to last year')
-    st.markdown('')
-    st.markdown('')
-    # Display the chart in Streamlit    
-    sub1, sub2, sub3, sub4, sub5 = st.columns(5)
-    
-    with sub1:
-        st.metric(label=frisbee_label, value=int(frisbee_target), delta = int(frisbee_target-frisbee_compare))
-    with sub2:
-        st.metric(label=ride_label, value=int(ride_target), delta = int(ride_target-ride_compare))
-    with sub3:
-        st.metric(label=weights_label, value=int(weights_target), delta = int(weights_target-weights_compare))
-    with sub4:
-        st.metric(label=run_label, value=int(run_target), delta = int(run_target-run_compare))
-    with sub5:
-        st.metric(label=other_label, value=int(other_target), delta = int(other_target-other_compare))
-    
-    graph1 = make_overview(aggregated_df, 'year', 'avg_hours', 'sport_type', 'Average Training Hours per Week throughout the years')
-    st.plotly_chart(graph1, use_container_width=True)
-    
-    year_list = sorted(data_import.year.unique(), reverse=True)[::-1]
-    
-    st.divider()
-
-    selected_year = st.selectbox('Select a year:', year_list, index=len(year_list)-1)
-    df_selected_year = data_year_month[data_year_month.year == selected_year]
-    df_selected_year_sorted = df_selected_year.sort_values(by="sport_type", ascending=False)
-
-    graph3 = make_overview(df_selected_year_sorted, 'month', 'hours', 'sport_type', 'Training Hours per Month')
-    st.plotly_chart(graph3, use_container_width=True)
-
-    sport_list = list(data_import.sport_type.unique())[::-1]
-    
-    st.divider()
-
-    selected_sport = st.selectbox('Select a sport:', sport_list, index=len(sport_list)-1)
-    df_selected_sport = data_year_month[data_year_month.sport_type == selected_sport]
-    df_selected_sport_sorted =df_selected_sport.sort_values(by="year", ascending=False)
-
-    graph4 = make_lines(df_selected_sport_sorted, 'month', 'hours', 'year', 'Training Hours per Sport')
-    st.plotly_chart(graph4, use_container_width=True)
