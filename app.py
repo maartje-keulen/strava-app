@@ -9,7 +9,16 @@ from datetime import datetime
 import streamlit as st
 
 def get_db_config():
-    client = secretmanager.SecretManagerServiceClient()
+    # Check if running on Streamlit Cloud (use service account from secrets)
+    if "gcp_service_account" in st.secrets:
+        from google.oauth2 import service_account
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = secretmanager.SecretManagerServiceClient(credentials=credentials)
+    else:
+        # Local development (use application default credentials)
+        client = secretmanager.SecretManagerServiceClient()
 
     secret_name = "projects/strava-maartje/secrets/db-config/versions/latest"
 
