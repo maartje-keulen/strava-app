@@ -22,14 +22,14 @@ def get_db_config():
     return db_config
 
 # Fetch and use the DB configuration
-#db_config = get_db_config()
+db_config = get_db_config()
 #print(db_config)
-db_config = {
-    "user": st.secrets["user"],
-    "password": st.secrets["password"],
-    "host": st.secrets["host"],
-    "port": st.secrets["port"]
-}
+#db_config = {
+#    "user": st.secrets["user"],
+#    "password": st.secrets["password"],
+#    "host": st.secrets["host"],
+#    "port": st.secrets["port"]
+#}
 
 try:
     # Connect to the database
